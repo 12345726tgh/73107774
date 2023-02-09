@@ -12,20 +12,28 @@ sealed interface JSModule {
     val identifier: String
     val namespace: String?
     val preferredEnvironment: JSEnvironment.Type
-    val paths: List<String>
+    val sources: List<String>
 
     data class Asset(
         override val identifier: String,
         override val namespace: String?,
         override val preferredEnvironment: JSEnvironment.Type,
-        override val paths: List<String>,
+        override val sources: List<String>,
     ) : JSModule
 
-    data class External(
+    data class Installed(
         override val identifier: String,
         override val namespace: String?,
         override val preferredEnvironment: JSEnvironment.Type,
-        override val paths: List<String>,
+        override val sources: List<String>,
+    ) : JSModule
+
+    data class Preview(
+        override val identifier: String,
+        override val namespace: String?,
+        override val preferredEnvironment: JSEnvironment.Type,
+        override val sources: List<String>,
+        val path: String,
     ) : JSModule
 }
 
@@ -71,7 +79,7 @@ sealed interface JSModuleAction {
         abstract val args: JSArray?
 
         override fun toJson(): String {
-            val args = args?.replaceNullWithUndefined()?.toString() ?: "[]"
+            val args = args?.toString() ?: "[]"
 
             return JSObject("""
                     {
@@ -135,6 +143,3 @@ sealed interface JSModuleAction {
         }
     }
 }
-
-private fun JSArray.replaceNullWithUndefined(): JSArray =
-    JSArray(toList<Any>().map { if (it == JSObject.NULL) JSUndefined else it })

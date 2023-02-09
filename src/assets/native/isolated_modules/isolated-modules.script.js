@@ -27,6 +27,22 @@ function createOnError(description, handler) {
   }
 }
 
+const UNDEFINED_STRING = 'it.airgap.vault.__UNDEFINED__'
+
+function replaceUndefined(value) {
+  if (Array.isArray(value)) {
+    return value.map((v) => replaceUndefined(v))
+  }
+  
+  if (typeof value === 'object') {
+    return Object.entries(value).reduce((obj, [key, value]) => Object.assign(obj, { [key]: replaceUndefined(value) }), {})
+  }
+
+  return typeof value === 'string' && value === UNDEFINED_STRING
+    ? undefined 
+    : value
+}
+
 function flattened(array) {
   if (!Array.isArray(array)) return array
 
@@ -259,10 +275,10 @@ function execute(namespace, moduleIdentifier, action, handleResult, handleError)
   try {
     switch (action.type) {
       case ACTION_LOAD:
-        load(namespace, moduleIdentifier, action).then(handleResult).catch(errorHandler('load'))
+        load(namespace, moduleIdentifier, replaceUndefined(action)).then(handleResult).catch(errorHandler('load'))
         break
       case ACTION_CALL_METHOD:
-        callMethod(namespace, action).then(handleResult).catch(errorHandler('call method'))
+        callMethod(namespace, replaceUndefined(action)).then(handleResult).catch(errorHandler('call method'))
         break
       default:
         throw new Error(`Unknown action ${action.type}`)
