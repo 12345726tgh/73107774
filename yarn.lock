@@ -12,17 +12,17 @@
   resolved "https://registry.yarnpkg.com/@airgap/aeternity/-/aeternity-0.13.10-beta.0.tgz#1f38a1575cd4c71ccde8fcd4b929f44e512aeed8"
   integrity sha512-8K+Qmndgg74IGQKtE/088kFH0S/Z0uywcqx9VQfY4NA5ToNsKEQiMjJLeH3QvP+V2zzl0jIASEhh9ZXS6vnnNA==
 
-"@airgap/angular-core@0.0.35-beta.1":
-  version "0.0.35-beta.1"
-  resolved "https://registry.yarnpkg.com/@airgap/angular-core/-/angular-core-0.0.35-beta.1.tgz#15838f5e8478ad1d27d84e5b0143f36eb6dba6fd"
-  integrity sha512-Z3JBXcR9rV4h0LzhJEVdNdD/7b8O46sb1+fLWf/1AZhL5ejTZcWpVbMpwFdFjWHTcWZqN8/fxQxvPOpLjwWexA==
+"@airgap/angular-core@0.0.35-beta.2":
+  version "0.0.35-beta.2"
+  resolved "https://registry.yarnpkg.com/@airgap/angular-core/-/angular-core-0.0.35-beta.2.tgz#b40ba21d1a0f2f20d25a4448c186b9727af31d5f"
+  integrity sha512-Omt+fW6MrL9KhjQ371pO9nsos6AGMBd1L0CIzBYCml3u5soVKKJXYE9d9A/ypoey4v8iVW6hD/uC/u1vpYHBMA==
   dependencies:
     tslib "^2.2.0"
 
-"@airgap/angular-ngrx@0.0.35-beta.1":
-  version "0.0.35-beta.1"
-  resolved "https://registry.yarnpkg.com/@airgap/angular-ngrx/-/angular-ngrx-0.0.35-beta.1.tgz#7b4fbe8d93327329122d2242f6af4522d2f336f8"
-  integrity sha512-wLI2lPCnsaG8JK0QFNrA45z0Sbo9fUMlOqElB3O6uKEEJfd7pVcsGUZnwRI3nMqZB90fH37pJcixm9PzYIHaoQ==
+"@airgap/angular-ngrx@0.0.35-beta.2":
+  version "0.0.35-beta.2"
+  resolved "https://registry.yarnpkg.com/@airgap/angular-ngrx/-/angular-ngrx-0.0.35-beta.2.tgz#a5217ffdb75fe2b65003fd1ee1152179ada7d241"
+  integrity sha512-87+EAaQrOM9tgi+pdOfm9g19FPvVoePXf4DnEtQijqCJfc3QTXgLsz/kL5IU5HATBJPTbkKnfELDMRTDtnWEBw==
   dependencies:
     tslib "^2.2.0"
 
