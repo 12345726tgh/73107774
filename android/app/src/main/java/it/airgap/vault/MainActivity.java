@@ -18,8 +18,10 @@ public class MainActivity extends BridgeActivity {
     registerPlugin(AppInfo.class);
     registerPlugin(SecurityUtils.class);
     registerPlugin(SaplingNative.class);
-    registerPlugin(IsolatedModules.class);
     registerPlugin(Zip.class);
+
+    // disable true isolation until it's production ready
+    // registerPlugin(IsolatedModules.class);
 
     super.onCreate(savedInstanceState);
   }
