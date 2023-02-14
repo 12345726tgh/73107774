@@ -12,14 +12,17 @@ import Capacitor
 
 enum JSModule {
     case asset(Asset)
-    case external(External)
+    case installed(Instsalled)
+    case preview(Preview)
     
     var identifier: String {
         switch self {
         case .asset(let asset):
             return asset.identifier
-        case .external(let external):
-            return external.identifier
+        case .installed(let installed):
+            return installed.identifier
+        case .preview(let preview):
+            return preview.identifier
         }
     }
     
@@ -27,8 +30,10 @@ enum JSModule {
         switch self {
         case .asset(let asset):
             return asset.namespace
-        case .external(let external):
-            return external.namespace
+        case .installed(let installed):
+            return installed.namespace
+        case .preview(let preview):
+            return preview.namespace
         }
     }
     
@@ -36,17 +41,21 @@ enum JSModule {
         switch self {
         case .asset(let asset):
             return asset.preferredEnvironment
-        case .external(let external):
-            return external.preferredEnvironment
+        case .installed(let installed):
+            return installed.preferredEnvironment
+        case .preview(let preview):
+            return preview.preferredEnvironment
         }
     }
     
-    var paths: [String] {
+    var sources: [String] {
         switch self {
         case .asset(let asset):
-            return asset.paths
-        case .external(let external):
-            return external.paths
+            return asset.sources
+        case .installed(let installed):
+            return installed.sources
+        case .preview(let preview):
+            return preview.sources
         }
     }
     
@@ -54,14 +63,22 @@ enum JSModule {
         let identifier: String
         let namespace: String?
         let preferredEnvironment: JSEnvironmentKind
-        let paths: [String]
+        let sources: [String]
     }
     
-    struct External: JSModuleProtocol {
+    struct Instsalled: JSModuleProtocol {
         let identifier: String
         let namespace: String?
         let preferredEnvironment: JSEnvironmentKind
-        let paths: [String]
+        let sources: [String]
+    }
+    
+    struct Preview: JSModuleProtocol {
+        let identifier: String
+        let namespace: String?
+        let preferredEnvironment: JSEnvironmentKind
+        let sources: [String]
+        let path: URL
     }
 }
 
@@ -69,9 +86,7 @@ protocol JSModuleProtocol {
     var identifier: String { get }
     var namespace: String? { get }
     var preferredEnvironment: JSEnvironmentKind { get }
-    var paths: [String] { get }
-    
-    init(identifier: String, namespace: String?, preferredEnvironment: JSEnvironmentKind, paths: [String])
+    var sources: [String] { get }
 }
 
 // MARK: JSProtocolType

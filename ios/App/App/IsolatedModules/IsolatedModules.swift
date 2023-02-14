@@ -14,11 +14,61 @@ public class IsolatedModules: CAPPlugin {
     private let fileExplorer: FileExplorer = .shared
     private lazy var jsEvaluator: JSEvaluator = .init(fileExplorer: fileExplorer)
     
+    @objc func previewModule(_ call: CAPPluginCall) {
+        call.assertReceived(forMethod: "previewModule", requiredParams: Param.PATH, Param.DIRECTORY)
+        
+        do {
+            guard let path = call.path, let directory = call.directory else {
+                throw Error.invalidData
+            }
+            
+            Task {
+                do {
+                    let module = try fileExplorer.loadPreviewModule(atPath: path, locatedIn: directory)
+                    let manifest = try fileExplorer.readModuleManifest(module)
+                    let moduleJSON = try await jsEvaluator.evaluatePreviewModule(module)
+                    
+                    call.resolve([
+                        "module": moduleJSON,
+                        "manifest": try JSONSerialization.jsonObject(with: manifest)
+                    ])
+                } catch {
+                    call.reject("Error: \(error)")
+                }
+            }
+        } catch {
+            call.reject("Error: \(error)")
+        }
+    }
+    
+    @objc func registerModule(_ call: CAPPluginCall) {
+        call.assertReceived(forMethod: "registerModule", requiredParams: Param.IDENTIFIER, Param.PROTOCOL_IDENTIFIERS)
+        
+        do {
+            guard let identifier = call.identifier, let protocolIdentifiers = call.protocolIdentifiers else {
+                throw Error.invalidData
+            }
+            
+            Task {
+                do {
+                    let module = try fileExplorer.loadInstalledModule(identifier)
+                    await jsEvaluator.registerModule(module, forProtocols: protocolIdentifiers)
+                    
+                    call.resolve()
+                } catch {
+                    call.reject("Error: \(error)")
+                }
+            }
+        } catch {
+            call.reject("Error: \(error)")
+        }
+    }
+    
     @objc func loadModules(_ call: CAPPluginCall) {
         Task {
             do {
                 let protocolType = call.protocolType
-                let modules: [JSModule] = try fileExplorer.loadAssetModules() + (try fileExplorer.loadExternalModules())
+                let modules: [JSModule] = try fileExplorer.loadAssetModules() + (try fileExplorer.loadInstalledModules())
                 
                 call.resolve(try await jsEvaluator.evaluateLoadModules(modules, for: protocolType))
             } catch {
@@ -99,6 +149,10 @@ public class IsolatedModules: CAPPlugin {
     }
     
     struct Param {
+        static let PATH = "path"
+        static let DIRECTORY = "directory"
+        static let IDENTIFIER = "identifier"
+        static let PROTOCOL_IDENTIFIERS = "protocolIdentifiers"
         static let PROTOCOL_TYPE = "protocolType"
         static let TARGET = "target"
         static let METHOD = "method"
@@ -114,14 +168,32 @@ public class IsolatedModules: CAPPlugin {
 }
 
 private extension CAPPluginCall {
+    var path: String? { return getString(IsolatedModules.Param.PATH) }
+    
+    var directory: Directory? {
+        guard let directory = getString(IsolatedModules.Param.DIRECTORY) else { return nil }
+        return .init(rawValue: directory)
+    }
+    
+    var identifier: String? { return getString(IsolatedModules.Param.IDENTIFIER) }
+    var protocolIdentifiers: [String]? {
+        return getArray(IsolatedModules.Param.PROTOCOL_IDENTIFIERS)?.compactMap {
+            if let string = $0 as? String {
+                return string
+            } else {
+                return nil
+            }
+        }
+    }
+    
     var protocolType: JSProtocolType? {
         guard let protocolType = getString(IsolatedModules.Param.PROTOCOL_TYPE) else { return nil }
-        return JSProtocolType(rawValue: protocolType)
+        return .init(rawValue: protocolType)
     }
     
     var target: JSCallMethodTarget? {
         guard let target = getString(IsolatedModules.Param.TARGET) else { return nil }
-        return JSCallMethodTarget(rawValue: target)
+        return .init(rawValue: target)
     }
     
     var method: String? { return getString(IsolatedModules.Param.METHOD) }

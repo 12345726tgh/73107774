@@ -18,10 +18,18 @@ class JSEvaluator {
         self.modulesManager = .init()
     }
     
+    func registerModule(_ module: JSModule, forProtocols protocolIdentifiers: [String]) async {
+        await modulesManager.registerModule(module, forProtocols: protocolIdentifiers)
+    }
+    
+    func evaluatePreviewModule(_ module: JSModule) async throws -> [String: Any] {
+        return try await self.webViewEnv.run(.load(.init(protocolType: nil)), in: module)
+    }
+    
     func evaluateLoadModules(_ modules: [JSModule], for protocolType: JSProtocolType?) async throws -> [String: Any] {
         let modulesJSON = try await modules.asyncMap { module in
             let json = try await self.webViewEnv.run(.load(.init(protocolType: protocolType)), in: module)
-            try await self.modulesManager.registerModule(module, json: json)
+            try await self.modulesManager.registerModule(module, forJSON: json)
             
             return json
         }
@@ -118,20 +126,25 @@ class JSEvaluator {
     private actor ModulesManager {
         private(set) var modules: [String: JSModule] = [:]
         
-        func registerModule(_ module: JSModule, json: [String: Any]) throws {
-            modules[module.identifier] = module
-            
+        func registerModule(_ module: JSModule, forJSON json: [String: Any]) throws {
             guard let protocols = json["protocols"] as? [Any] else {
                 throw Error.invalidJSON
             }
             
-            try protocols.forEach { `protocol` in
+            let protocolIdentifiers = try protocols.map { `protocol` in
                 guard let `protocol` = `protocol` as? [String: Any], let identifier = `protocol`["identifier"] as? String else {
                     throw Error.invalidJSON
                 }
                 
-                modules[identifier] = module
+                return identifier
             }
+            
+            registerModule(module, forProtocols: protocolIdentifiers)
+        }
+        
+        func registerModule(_ module: JSModule, forProtocols protocolIdentifiers: [String]) {
+            modules[module.identifier] = module
+            protocolIdentifiers.forEach { identifier in modules[identifier] = module }
         }
     }
     

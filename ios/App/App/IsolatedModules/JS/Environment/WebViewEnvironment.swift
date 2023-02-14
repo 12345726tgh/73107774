@@ -37,9 +37,17 @@ class WebViewEnvironment: NSObject, JSEnvironment, WKNavigationDelegate {
                 webView.removeFromSuperview()
             }
             
-            try await webView.evaluateJavaScriptAsync(try fileExplorer.readIsolatedModulesScript())
+            guard let scriptSource = String(data: try fileExplorer.readIsolatedModulesScript(), encoding: .utf8) else {
+                throw Error.invalidSource
+            }
+            try await webView.evaluateJavaScriptAsync(scriptSource)
+            
             for source in try fileExplorer.readModuleSources(module) {
-                try await webView.evaluateJavaScriptAsync(source)
+                guard let string = String(data: source, encoding: .utf8) else {
+                    throw Error.invalidSource
+                }
+                
+                try await webView.evaluateJavaScriptAsync(string)
             }
             
             let script = """
@@ -76,6 +84,7 @@ class WebViewEnvironment: NSObject, JSEnvironment, WKNavigationDelegate {
     }
     
     private enum Error: Swift.Error {
+        case invalidSource
         case invalidResult
     }
 }

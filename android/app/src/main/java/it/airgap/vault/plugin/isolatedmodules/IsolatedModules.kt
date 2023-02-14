@@ -63,7 +63,7 @@ class IsolatedModules : Plugin() {
     fun loadModules(call: PluginCall) {
         activity.lifecycleScope.launch {
             call.executeCatching {
-                val modules = fileExplorer.loadAssetModules() + fileExplorer.loadExternalModules()
+                val modules = fileExplorer.loadAssetModules() + fileExplorer.loadInstalledModules()
 
                 resolve(jsEvaluator.await().evaluateLoadModules(modules, protocolType))
             }

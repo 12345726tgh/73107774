@@ -36,8 +36,8 @@ public class Zip: CAPPlugin {
         try FileManager.default.unzipItem(at: sourceURL, to: destinationURL)
     }
     
-    private func getFileURL(at path: String, locatedIn directory: String?) -> URL? {
-        if let directory = getDirectory(from: directory) {
+    private func getFileURL(at path: String, locatedIn directory: Directory?) -> URL? {
+        if let directory = FileManager.default.getDirectory(from: directory) {
             guard let dir = FileManager.default.urls(for: directory, in: .userDomainMask).first else {
                 return nil
             }
@@ -48,36 +48,11 @@ public class Zip: CAPPlugin {
         }
     }
     
-    private func getDirectory(from directory: String?) -> FileManager.SearchPathDirectory? {
-        switch directory {
-        case Directory.LIBRARY:
-            return .libraryDirectory
-        case Directory.CACHE:
-            return .cachesDirectory
-        case Directory.DOCUMENTS,
-             Directory.DATA,
-             Directory.EXTERNAL,
-             Directory.EXTERNAL_STORAGE:
-            return .documentDirectory
-        default:
-            return nil
-        }
-    }
-    
     struct Param {
         static let FROM = "from"
         static let TO = "to"
         static let DIRECTORY = "directory"
         static let TO_DIRECTORY = "toDirectory"
-    }
-    
-    private struct Directory {
-        static let DOCUMENTS = "DOCUMENTS"
-        static let DATA = "DATA"
-        static let LIBRARY = "LIBRARY"
-        static let CACHE = "CACHE"
-        static let EXTERNAL = "EXTERNAL"
-        static let EXTERNAL_STORAGE = "EXTERNAL_STORAGE"
     }
     
     private enum Error: Swift.Error {
@@ -89,6 +64,13 @@ private extension CAPPluginCall {
     var from: String { return getString(Zip.Param.FROM)! }
     var to: String { return getString(Zip.Param.TO)! }
     
-    var directory: String? { return getString(Zip.Param.DIRECTORY) }
-    var toDirectory: String? { return getString(Zip.Param.TO_DIRECTORY) }
+    var directory: Directory? {
+        guard let directory = getString(Zip.Param.DIRECTORY) else { return nil }
+        return .init(rawValue: directory)
+    }
+    
+    var toDirectory: Directory? {
+        guard let toDirectory = getString(Zip.Param.TO_DIRECTORY) else { return nil }
+        return .init(rawValue: toDirectory)
+    }
 }

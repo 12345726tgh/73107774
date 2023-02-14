@@ -12,49 +12,96 @@ import Foundation
 struct FileExplorer {
     static let shared: FileExplorer = .init()
     
-    private let assets: AssetsExplorer
-    private let document: DocumentExplorer
+    private let assetsExplorer: AssetsExplorer
+    private let documentExplorer: DocumentExplorer
+    
+    private let fileManager: FileManager
     
     init(fileManager: FileManager = .default) {
-        self.assets = .init(fileManager: fileManager)
-        self.document = .init(fileManager: fileManager)
+        self.assetsExplorer = .init(fileManager: fileManager)
+        self.documentExplorer = .init(fileManager: fileManager)
+        self.fileManager = fileManager
     }
     
-    func readIsolatedModulesScript() throws -> String {
-        try assets.readIsolatedModulesScript()
+    func readIsolatedModulesScript() throws -> Data {
+        try assetsExplorer.readIsolatedModulesScript()
     }
     
     func loadAssetModules() throws -> [JSModule] {
-        try loadModules(explorer: assets).map { .asset($0) }
+        try loadModules(using: assetsExplorer, creatingModuleWith: JSModule.Asset.init).map { .asset($0) }
     }
     
-    func loadExternalModules() throws -> [JSModule] {
-        try loadModules(explorer: document).map { .external($0) }
+    func loadInstalledModule(_ identifier: String) throws -> JSModule {
+        let manifest = try documentExplorer.readModuleManifest(identifier)
+        
+        return .installed(try loadModule(identifier, fromManifest: manifest, creatingModuleWith: JSModule.Instsalled.init))
     }
     
-    func readModuleSources(_ module: JSModule) throws -> [String] {
+    func loadInstalledModules() throws -> [JSModule] {
+        try loadModules(using: documentExplorer, creatingModuleWith: JSModule.Instsalled.init).map { .installed($0) }
+    }
+    
+    func loadPreviewModule(atPath path: String, locatedIn directory: Directory) throws -> JSModule {        
+        guard let directory = fileManager.getDirectory(from: directory),
+              let url = fileManager.urls(for: directory, in: .userDomainMask).first?.appendingPathComponent(path) else {
+            throw Error.invalidDirectory
+        }
+        
+        let identifier = url.pathComponents.last ?? "module"
+        let manifest = try fileManager.contents(at: url.appendingPathComponent(FileExplorer.manifestFilename))
+        
+        return .preview(try loadModule(identifier, fromManifest: manifest) { identifier, namespace, preferredEnvironment, sources in
+            JSModule.Preview(identifier: identifier, namespace: namespace, preferredEnvironment: preferredEnvironment, sources: sources, path: url)
+        })
+    }
+    
+    func readModuleSources(_ module: JSModule) throws -> [Data] {
         switch module {
         case .asset(let asset):
-            return try assets.readModuleSources(asset)
-        case .external(let external):
-            return try document.readModuleSources(external)
+            return try assetsExplorer.readModuleSources(asset)
+        case .installed(let installed):
+            return try documentExplorer.readModuleSources(installed)
+        case .preview(let preview):
+            return try preview.sources.lazy.map { try fileManager.contents(at: preview.path.appendingPathComponent($0)) }
         }
     }
     
-    private func loadModules<T: JSModuleProtocol, E: DynamicSourcesExplorer>(explorer: E) throws -> [T] where E.T == T {
-        try explorer.listModules().map { module in
-            let jsonDecoder = JSONDecoder()
-            guard let manifestData = try explorer.readModuleManifest(module).data(using: .utf8) else {
-                throw JSError.invalidJSON
-            }
-            
-            let manifest = try jsonDecoder.decode(ModuleManifest.self, from: manifestData)
-            let namespace = manifest.src?.namespace
-            let preferredEnvironment = manifest.jsenv?.ios ?? .webview
-            let paths = try manifest.include.map { try explorer.absoluteModulePath(ofPath: "\(module)/\($0)") }
-            
-            return T.init(identifier: module, namespace: namespace, preferredEnvironment: preferredEnvironment, paths: paths)
+    func readModuleManifest(_ module: JSModule) throws -> Data {
+        switch module {
+        case .asset(let asset):
+            return try assetsExplorer.readModuleManifest(asset.identifier)
+        case .installed(let installed):
+            return try documentExplorer.readModuleManifest(installed.identifier)
+        case .preview(let preview):
+            return try fileManager.contents(at: preview.path.appendingPathComponent(FileExplorer.manifestFilename))
         }
+    }
+    
+    private func loadModules<T: JSModuleProtocol, E: DynamicSourcesExplorer>(
+        using explorer: E,
+        creatingModuleWith moduleInit: (_ identifier: String, _ namespace: String?, _ preferredEnvironment: JSEnvironmentKind, _ sources: [String]) -> T
+    ) throws -> [T] where E.T == T {
+        try explorer.listModules().map { module in
+            try loadModule(module, fromManifest: try explorer.readModuleManifest(module), creatingModuleWith: moduleInit)
+        }
+    }
+    
+    private func loadModule<T: JSModuleProtocol>(
+        _ identifier: String,
+        fromManifest manifestData: Data,
+        creatingModuleWith moduleInit: (_ identifier: String, _ namespace: String?, _ preferredEnvironment: JSEnvironmentKind, _ sources: [String]) -> T
+    ) throws -> T {
+        let jsonDecoder = JSONDecoder()
+    
+        let manifest = try jsonDecoder.decode(ModuleManifest.self, from: manifestData)
+        let namespace = manifest.src?.namespace
+        let preferredEnvironment = manifest.jsenv?.ios ?? .webview
+        let sources: [String] = manifest.include.compactMap { source in
+            guard source.hasSuffix(".js") else { return nil }
+            return source
+        }
+        
+        return moduleInit(identifier, namespace, preferredEnvironment, sources)
     }
 }
 
@@ -73,8 +120,8 @@ private struct AssetsExplorer: DynamicSourcesExplorer {
         self.fileManager = fileManager
     }
     
-    func readIsolatedModulesScript() throws -> String {
-        try readString(atPath: Self.script)
+    func readIsolatedModulesScript() throws -> Data {
+        try readData(atPath: Self.script)
     }
     
     func listModules() throws -> [String] {
@@ -82,28 +129,28 @@ private struct AssetsExplorer: DynamicSourcesExplorer {
         return try fileManager.contentsOfDirectory(atPath: url.path)
     }
     
-    func absoluteModulePath(ofPath path: String) throws -> String {
-        "\(Self.modulesDir)/\(path)"
+    func modulePath(_ module: String, forPath path: String) throws -> String {
+        "\(Self.modulesDir)/\(module)/\(path)"
     }
     
-    func readModuleSources(_ module: JSModule.Asset) throws -> [String] {
-        try module.paths.lazy.map { try readString(atPath: $0) }
+    func readModuleSources(_ module: JSModule.Asset) throws -> [Data] {
+        try module.sources.lazy.map { try readData(atPath: modulePath(module.identifier, forPath: $0)) }
     }
     
-    func readModuleManifest(_ module: String) throws -> String {
-        try readString(atPath: "\(absoluteModulePath(ofPath: module))/manifest.json")
+    func readModuleManifest(_ module: String) throws -> Data {
+        try readData(atPath: modulePath(module, forPath: FileExplorer.manifestFilename))
     }
     
-    private func readString(atPath pathComponent: String) throws -> String {
+    private func readData(atPath pathComponent: String) throws -> Data {
         let url = Self.assetsURL.appendingPathComponent(pathComponent)
-        return try fileManager.stringContents(atPath: url.path)
+        return try fileManager.contents(at: url)
     }
 }
 
 // MARK: DocumentExplorer
 
 private struct DocumentExplorer: DynamicSourcesExplorer {
-    typealias T = JSModule.External
+    typealias T = JSModule.Instsalled
     
     private static let modulesDir: String = "protocol_modules"
     
@@ -126,21 +173,24 @@ private struct DocumentExplorer: DynamicSourcesExplorer {
         return try fileManager.contentsOfDirectory(atPath: modulesDirPath)
     }
     
-    func absoluteModulePath(ofPath path: String) throws -> String {
-        return "\(Self.modulesDir)/\(path)"
+    func modulePath(_ module: String, ofPath path: String) throws -> String {
+        return "\(Self.modulesDir)/\(module)/\(path)"
     }
     
-    func readModuleSources(_ module: JSModule.External) throws -> [String] {
-        try module.paths.lazy.map { try readString(atPath: $0) }
+    func readModuleSources(_ module: JSModule.Instsalled) throws -> [Data] {
+        try module.sources.lazy.map { try readData(atPath: modulePath(module.identifier, ofPath: $0)) }
     }
     
-    func readModuleManifest(_ module: String) throws -> String {
-        try readString(atPath: "\(absoluteModulePath(ofPath: module))/manifest.json")
+    func readModuleManifest(_ module: String) throws -> Data {
+        try readData(atPath: modulePath(module, ofPath: FileExplorer.manifestFilename))
     }
     
-    private func readString(atPath path: String) throws -> String {
-        let url = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first!.appendingPathComponent(path)
-        return try fileManager.stringContents(atPath: url.path)
+    private func readData(atPath path: String) throws -> Data {
+        guard let url = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent(path) else {
+            throw Error.invalidDirectory
+        }
+        
+        return try fileManager.contents(at: url)
     }
 }
 
@@ -150,25 +200,28 @@ private protocol DynamicSourcesExplorer {
     associatedtype T
     
     func listModules() throws -> [String]
-    func absoluteModulePath(ofPath path: String) throws -> String
     
-    func readModuleSources(_ module: T) throws -> [String]
-    func readModuleManifest(_ module: String) throws -> String
+    func readModuleSources(_ module: T) throws -> [Data]
+    func readModuleManifest(_ module: String) throws -> Data
 }
 
 // MARK: Extensions
 
+private extension FileExplorer {
+    static let manifestFilename: String = "manifest.json"
+}
+
 private extension FileManager {
-    func stringContents(atPath path: String) throws -> String {
-        guard let data = contents(atPath: path),
-              let string = String(data: data, encoding: .utf8) else {
+    func contents(at url: URL) throws -> Data {
+        guard let data = contents(atPath: url.path) else {
             throw Error.invalidPath
         }
         
-        return string
+        return data
     }
 }
 
 private enum Error: Swift.Error {
     case invalidPath
+    case invalidDirectory
 }

@@ -30,6 +30,16 @@ class FileExplorer private constructor(
 ) : StaticSourcesExplorer by assetsExplorer {
     constructor(context: Context) : this(context, AssetsExplorer(context), FilesExplorer(context))
 
+    fun loadAssetModules(): List<JSModule> = loadModules(assetsExplorer, JSModule::Asset)
+
+    fun loadInstalledModules(): List<JSModule> = loadModules(filesExplorer, JSModule::Installed)
+
+    fun loadInstalledModule(identifier: String): JSModule {
+        val manifest = JSObject(filesExplorer.readModuleManifest(identifier).decodeToString())
+
+        return loadModule(identifier, manifest, JSModule::Installed)
+    }
+
     fun loadPreviewModule(path: String, directory: Directory): JSModule {
         val moduleDir = File(context.getDirectory(directory), path)
         val manifest = JSObject(File(moduleDir, MANIFEST_FILENAME).readBytes().decodeToString())
@@ -44,15 +54,6 @@ class FileExplorer private constructor(
             )
         }
     }
-
-    fun loadInstalledModule(identifier: String): JSModule {
-        val manifest = JSObject(filesExplorer.readModuleManifest(identifier).decodeToString())
-
-        return loadModule(identifier, manifest, JSModule::Installed)
-    }
-
-    fun loadAssetModules(): List<JSModule> = loadModules(assetsExplorer, JSModule::Asset)
-    fun loadExternalModules(): List<JSModule> = loadModules(filesExplorer, JSModule::Installed)
 
     fun readModuleSources(module: JSModule): Sequence<ByteArray> =
         when (module) {
@@ -83,15 +84,15 @@ class FileExplorer private constructor(
     ): T {
         val namespace = manifest.getJSObject("src")?.getString("namespace")
         val preferredEnvironment = manifest.getJSObject("jsenv")?.getString("android")?.let { JSEnvironment.Type.fromString(it) } ?: JSEnvironment.Type.JavaScriptEngine
-        val paths = buildList {
+        val sources = buildList {
             val include = manifest.getJSONArray("include")
             for (i in 0 until include.length()) {
-                val path = include.getString(i).takeIf { it.endsWith(".js") } ?: continue
-                add(path.trimStart('/'))
+                val source = include.getString(i).takeIf { it.endsWith(".js") } ?: continue
+                add(source.trimStart('/'))
             }
         }
 
-        return constructor(identifier, namespace, preferredEnvironment, paths)
+        return constructor(identifier, namespace, preferredEnvironment, sources)
     }
 }
 
