@@ -1,4 +1,4 @@
-import { APP_PLUGIN, CLIPBOARD_PLUGIN, FILESYSTEM_PLUGIN, IsolatedModulesPlugin, ISOLATED_MODULES_PLUGIN, ProtocolService, SPLASH_SCREEN_PLUGIN, STATUS_BAR_PLUGIN } from '@airgap/angular-core'
+import { APP_PLUGIN, CLIPBOARD_PLUGIN, FILESYSTEM_PLUGIN, IsolatedModulesPlugin, ISOLATED_MODULES_PLUGIN, ProtocolService, SPLASH_SCREEN_PLUGIN, STATUS_BAR_PLUGIN, ZipPlugin, ZIP_PLUGIN } from '@airgap/angular-core'
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { AppPlugin } from '@capacitor/app'
@@ -22,8 +22,8 @@ import {
 
 import { UnitHelper } from './../../test-config/unit-test-helper'
 import { AppComponent } from './app.component'
-import { SaplingNativePlugin, SecurityUtilsPlugin, ZipPlugin } from './capacitor-plugins/definitions'
-import { SAPLING_PLUGIN, SECURITY_UTILS_PLUGIN, ZIP_PLUGIN } from './capacitor-plugins/injection-tokens'
+import { SaplingNativePlugin, SecurityUtilsPlugin } from './capacitor-plugins/definitions'
+import { SAPLING_PLUGIN, SECURITY_UTILS_PLUGIN } from './capacitor-plugins/injection-tokens'
 import { IACService } from './services/iac/iac.service'
 import { NavigationService } from './services/navigation/navigation.service'
 import { SecretsService } from './services/secrets/secrets.service'

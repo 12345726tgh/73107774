@@ -1,12 +1,12 @@
 // tslint:disable: max-classes-per-file
-import { AppInfoPlugin, IsolatedModulesPlugin } from '@airgap/angular-core'
+import { AppInfoPlugin, IsolatedModulesPlugin, ZipPlugin } from '@airgap/angular-core'
 import { AppPlugin } from '@capacitor/app'
 import { ClipboardPlugin } from '@capacitor/clipboard'
 import { FilesystemPlugin } from '@capacitor/filesystem'
 import { SplashScreenPlugin } from '@capacitor/splash-screen'
 import { StatusBarPlugin } from '@capacitor/status-bar'
 
-import { SaplingNativePlugin, SecurityUtilsPlugin, ZipPlugin } from '../src/app/capacitor-plugins/definitions'
+import { SaplingNativePlugin, SecurityUtilsPlugin } from '../src/app/capacitor-plugins/definitions'
 
 import { newSpy } from './unit-test-helper'
 
