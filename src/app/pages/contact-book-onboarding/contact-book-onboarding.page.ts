@@ -6,7 +6,26 @@ import { Component } from '@angular/core'
   styleUrls: ['./contact-book-onboarding.page.scss']
 })
 export class ContactBookOnboardingPage {
-  constructor(
-  ) {
+  state: 0 | 1 | 2
+  constructor() {
+    this.state = 0
+  }
+
+  changeState(state: 0 | 1 | 2) {
+    this.state = state
+  }
+
+  next() {
+    if (this.state < 2) this.state++
+    else console.log('next route')
+  }
+
+  prev() {
+    if (this.state > 0) this.state--
+    else console.log('prev route')
+  }
+
+  toggle() {
+    console.log('toggle recommendation service')
   }
 }
