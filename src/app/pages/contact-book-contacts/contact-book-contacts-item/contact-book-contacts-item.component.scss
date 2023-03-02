@@ -1,0 +1,42 @@
+.contact-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  .contact-image-wrapper {
+    height: 35px;
+    width: 35px;
+
+    .contact-image {
+      background-color: purple;
+      width: 100%;
+      height: 100%;
+      border-radius: 100%;
+    }
+  }
+
+  .contact-name-wrapper {
+    flex: 1;
+    .contact-name {
+      margin: 0px;
+    }
+
+    .contact-address {
+      margin: 0px;
+      max-width: 60vw;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+  }
+
+  .contact-icon-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+
+    .contact-date {
+      margin: 0px;
+    }
+  }
+}

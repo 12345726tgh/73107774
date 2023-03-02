@@ -2,6 +2,7 @@ import { BaseStorage } from '@airgap/angular-core'
 import { Injectable } from '@angular/core'
 import { Storage } from '@ionic/storage'
 import { Observable, ReplaySubject } from 'rxjs'
+import { AddType } from 'src/app/pages/contact-book-contacts/contact-book-contacts.page'
 
 export enum LanguagesType {
   EN = 'en',
@@ -42,7 +43,8 @@ export enum VaultStorageKey {
   INTERACTION_TYPE = 'INTERACTION_TYPE',
   LANGUAGE_TYPE = 'LANGUAGE_TYPE',
   INSTALLATION_TYPE = 'INSTALLATION_TYPE',
-  AIRGAP_SECRET_LIST = 'airgap-secret-list'
+  AIRGAP_SECRET_LIST = 'airgap-secret-list',
+  AIRGAP_CONTACTS_LIST = 'airgap-contacts-list'
 }
 
 interface VaultStorageKeyReturnType {
@@ -56,6 +58,7 @@ interface VaultStorageKeyReturnType {
   [VaultStorageKey.LANGUAGE_TYPE]: LanguagesType | undefined
   [VaultStorageKey.INSTALLATION_TYPE]: InstallationType
   [VaultStorageKey.AIRGAP_SECRET_LIST]: unknown
+  [VaultStorageKey.AIRGAP_CONTACTS_LIST]: unknown
 }
 
 type VaultStorageKeyReturnDefaults = { [key in VaultStorageKey]: VaultStorageKeyReturnType[key] }
@@ -70,7 +73,39 @@ const defaultValues: VaultStorageKeyReturnDefaults = {
   [VaultStorageKey.INTERACTION_TYPE]: InteractionType.UNDETERMINED,
   [VaultStorageKey.LANGUAGE_TYPE]: undefined,
   [VaultStorageKey.INSTALLATION_TYPE]: InstallationType.UNDETERMINED,
-  [VaultStorageKey.AIRGAP_SECRET_LIST]: []
+  [VaultStorageKey.AIRGAP_SECRET_LIST]: [],
+  [VaultStorageKey.AIRGAP_CONTACTS_LIST]: [
+    {
+      name: 'AA_Contact1',
+      address: 'tz3NDpRj6WBrJPikcPVHRBEjWKxFw3c6eQPS',
+      addedFrom: AddType.MANUAL,
+      date: '10. Nov'
+    },
+    {
+      name: 'A2',
+      address: 'KT1XRPEPXbZK25r3Htzp2o1x7xdMMmfocKNW',
+      addedFrom: AddType.MANUAL,
+      date: '12. Nov'
+    },
+    {
+      name: 'Alexander_',
+      address: 'tz3QSGPoRp3Kn7n3vY24eYeu3Peuqo45LQ4D',
+      addedFrom: AddType.RECOMMENDED,
+      date: '12. Nov'
+    },
+    {
+      name: 'Kol_S',
+      address: 'tz1g6cJZPL8DoDZtX8voQ11prscHC7xqbois',
+      addedFrom: AddType.QR,
+      date: '21. Jan'
+    },
+    {
+      name: 'Kool',
+      address: 'KT1XRPEPXbZK25r3Htzp2o1x7xdMMmfocKNW',
+      addedFrom: AddType.SIGNING,
+      date: '25. Jan'
+    }
+  ]
 }
 
 @Injectable({
