@@ -17,7 +17,7 @@ export enum AddType {
   SIGNING = 'SIGNING'
 }
 
-interface ContactType {
+export interface ContactType {
   name: string
   address: string
   date: string
@@ -60,7 +60,15 @@ export class ContactBookContactsPage implements OnInit {
   }
 
   public onClickNew(_: any) {
-    this.navigationService.route('/contact-book-contacts-detail').catch(handleErrorLocal(ErrorCategory.IONIC_NAVIGATION))
+    this.navigationService
+      .routeWithState('/contact-book-contacts-detail', { isNew: true }, { replaceUrl: true })
+      .catch(handleErrorLocal(ErrorCategory.IONIC_NAVIGATION))
+  }
+
+  public onClickItem(contact: ContactType) {
+    this.navigationService
+      .routeWithState('/contact-book-contacts-detail', { contact: contact })
+      .catch(handleErrorLocal(ErrorCategory.IONIC_NAVIGATION))
   }
 
   public async onClickSort(event: any) {
@@ -82,11 +90,6 @@ export class ContactBookContactsPage implements OnInit {
     })
 
     popover.present().catch(handleErrorLocal(ErrorCategory.IONIC_MODAL))
-  }
-
-  public onClickItem(contact: ContactType) {
-    console.log('clicked on contact', contact.name)
-    this.navigationService.route('/contact-book-contacts-detail').catch(handleErrorLocal(ErrorCategory.IONIC_NAVIGATION))
   }
 
   public getLettersFromNames(): string[] {
