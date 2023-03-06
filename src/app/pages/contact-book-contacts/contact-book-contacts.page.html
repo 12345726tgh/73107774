@@ -82,5 +82,18 @@
         </div>
       </div>
     </ng-container>
+
+    <ng-container *ngIf="suggestions.length > 0">
+      <div class="suggestions-wrapper">
+        <h3 class="suggestions-header">Suggestions</h3>
+        <div *ngFor="let suggestion of suggestions">
+          <airgap-contact-book-contacts-suggestion
+            [address]="suggestion"
+            (onClickAdd)="onClickAddSuggestion(suggestion)"
+            (onClickClose)="onClickCloseSuggestion(suggestion)"
+          ></airgap-contact-book-contacts-suggestion>
+        </div>
+      </div>
+    </ng-container>
   </ng-container>
 </ion-content>

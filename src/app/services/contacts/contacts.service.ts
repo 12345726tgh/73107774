@@ -29,7 +29,20 @@ export interface ContactType {
   providedIn: 'root'
 })
 export class ContactsService {
+  private suggestions: string[] = []
+
   constructor(private readonly storageService: VaultStorageService) {}
+
+  getSuggestions(): string[] {
+    return this.suggestions
+  }
+
+  async deleteSuggestion(address: string): Promise<void> {
+    const index = this.suggestions.findIndex((suggestion) => suggestion === address)
+    if (index >= 0) {
+      this.suggestions.splice(index, 1)
+    } else console.error('Invalid suggestion')
+  }
 
   async getContactsInfo(): Promise<ContactInfo[]> {
     const storedContacts: ContactType[] = (await this.storageService.get(VaultStorageKey.AIRGAP_CONTACTS_LIST)) as ContactType[]

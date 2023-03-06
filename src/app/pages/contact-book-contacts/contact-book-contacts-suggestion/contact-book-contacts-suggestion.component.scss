@@ -1,0 +1,44 @@
+.suggestion-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 2px solid #80808094;
+  border-radius: 6px;
+  padding: 4px 8px;
+
+  .suggestion-image-wrapper {
+    height: 35px;
+    width: 35px;
+
+    .suggestion-image {
+      background-color: purple;
+      width: 100%;
+      height: 100%;
+      border-radius: 100%;
+    }
+  }
+
+  .suggestion-name-wrapper {
+    flex: 1;
+
+    .suggestion-address {
+      margin: 0px;
+      max-width: 60vw;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+      font-weight: 400;
+      color: grey;
+    }
+  }
+
+  .suggestion-icon-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+
+    .suggestion-date {
+      margin: 0px;
+    }
+  }
+}

@@ -7,6 +7,7 @@ import { TranslateModule } from '@ngx-translate/core'
 import { ContactBookContactsItemComponent } from './contact-book-contacts-item/contact-book-contacts-item.component'
 
 import { ContactBookContactsPopoverComponent } from './contact-book-contacts-popover/contact-book-contacts-popover.component'
+import { ContactBookContactsSuggestionComponent } from './contact-book-contacts-suggestion/contact-book-contacts-suggestion.component'
 import { ContactBookContactsPage } from './contact-book-contacts.page'
 
 const routes: Routes = [
@@ -17,8 +18,13 @@ const routes: Routes = [
 ]
 
 @NgModule({
-  entryComponents: [ContactBookContactsPopoverComponent, ContactBookContactsItemComponent],
+  entryComponents: [ContactBookContactsPopoverComponent, ContactBookContactsItemComponent, ContactBookContactsSuggestionComponent],
   imports: [CommonModule, FormsModule, ReactiveFormsModule, IonicModule, RouterModule.forChild(routes), TranslateModule],
-  declarations: [ContactBookContactsPage, ContactBookContactsPopoverComponent, ContactBookContactsItemComponent]
+  declarations: [
+    ContactBookContactsPage,
+    ContactBookContactsPopoverComponent,
+    ContactBookContactsItemComponent,
+    ContactBookContactsSuggestionComponent
+  ]
 })
 export class ContactBookContactsPageModule {}

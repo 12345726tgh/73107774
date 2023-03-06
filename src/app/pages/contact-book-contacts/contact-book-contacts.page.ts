@@ -24,6 +24,10 @@ export class ContactBookContactsPage implements OnInit {
 
   public contacts: ContactInfo[] = []
 
+  get suggestions() {
+    return this.contactsService.getSuggestions()
+  }
+
   constructor(
     private readonly popoverCtrl: PopoverController,
     private readonly navigationService: NavigationService,
@@ -72,6 +76,20 @@ export class ContactBookContactsPage implements OnInit {
     })
 
     popover.present().catch(handleErrorLocal(ErrorCategory.IONIC_MODAL))
+  }
+
+  public async onClickAddSuggestion(address: string) {
+    this.navigationService
+      .routeWithState(
+        '/contact-book-contacts-detail',
+        { isNew: true, addType: AddType.RECOMMENDED, address: address },
+        { replaceUrl: true }
+      )
+      .catch(handleErrorLocal(ErrorCategory.IONIC_NAVIGATION))
+  }
+
+  public async onClickCloseSuggestion(address: string) {
+    await this.contactsService.deleteSuggestion(address)
   }
 
   public getLettersFromNames(): string[] {
