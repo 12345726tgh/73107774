@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core'
-import { AddType } from '../contact-book-contacts.page'
+import { AddType } from 'src/app/services/contacts/contacts.service'
 
 export enum SortType {
   NAME = 'NAME',

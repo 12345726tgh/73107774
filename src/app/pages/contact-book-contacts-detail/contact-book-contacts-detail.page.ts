@@ -1,7 +1,7 @@
 import { Component } from '@angular/core'
+import { AddType, ContactsService, ContactType } from 'src/app/services/contacts/contacts.service'
 import { ErrorCategory, handleErrorLocal } from 'src/app/services/error-handler/error-handler.service'
 import { NavigationService } from 'src/app/services/navigation/navigation.service'
-import { AddType, ContactType } from '../contact-book-contacts/contact-book-contacts.page'
 
 @Component({
   selector: 'airgap-contact-book-contacts-detail',
@@ -13,7 +13,8 @@ export class ContactBookContactsDetailPage {
 
   public state: 'view' | 'new' | 'edit' = 'new'
   public contact: ContactType | undefined
-  constructor(private readonly navigationService: NavigationService) {}
+
+  constructor(private readonly navigationService: NavigationService, private readonly contactsService: ContactsService) {}
 
   ionViewWillEnter() {
     const state = this.navigationService?.getState()
@@ -34,11 +35,51 @@ export class ContactBookContactsDetailPage {
     else this.state = 'view'
   }
 
+  async onClickFinish() {
+    if (!this.contact) {
+      console.error('No contact!')
+      return
+    }
+
+    if (!this.contact.name || this.contact.name?.length <= 0) {
+      console.error('No name!')
+      return
+    }
+
+    if (!this.contact.address || this.contact.address?.length <= 0) {
+      console.error('No address!')
+      return
+    }
+
+    if (this.state === 'new') {
+      await this.contactsService.createContact(this.contact.name, this.contact.address, AddType.MANUAL)
+      this.navigationService.route('/contact-book-contacts').catch(handleErrorLocal(ErrorCategory.IONIC_NAVIGATION))
+    } else if (this.state === 'edit') {
+      await this.contactsService.updateContact(this.contact.id, this.contact.name, this.contact.address)
+      this.navigationService.route('/contact-book-contacts').catch(handleErrorLocal(ErrorCategory.IONIC_NAVIGATION))
+    } else console.error('Invalid state on finish')
+  }
+
   onClickEdit() {
     this.state = 'edit'
   }
 
-  onClickDelete() {
-    console.log('delete')
+  async onClickDelete() {
+    await this.contactsService.deleteContact(this.contact.id)
+    this.navigationService.route('/contact-book-contacts').catch(handleErrorLocal(ErrorCategory.IONIC_NAVIGATION))
+  }
+
+  onChangeName(event: any) {
+    if (!this.contact) {
+      this.contact = {} as ContactType
+    }
+    this.contact.name = event.target.value
+  }
+
+  onChangeAddress(event: any) {
+    if (!this.contact) {
+      this.contact = {} as ContactType
+    }
+    this.contact.address = event.target.value
   }
 }

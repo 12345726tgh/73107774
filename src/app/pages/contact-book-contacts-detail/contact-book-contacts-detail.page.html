@@ -12,7 +12,7 @@
       <p>Cancel</p>
     </ion-buttons>
     <ion-title>{{ "New Address Entry" }}</ion-title>
-    <ion-buttons slot="end">
+    <ion-buttons slot="end" (click)="onClickFinish()">
       <p>Finish</p>
     </ion-buttons>
   </ion-toolbar>
@@ -20,7 +20,7 @@
     <ion-buttons slot="start" (click)="onClickCancel()">
       <p>Cancel</p>
     </ion-buttons>
-    <ion-buttons slot="end">
+    <ion-buttons slot="end" (click)="onClickFinish()">
       <p>Finish</p>
     </ion-buttons>
   </ion-toolbar>
@@ -104,11 +104,11 @@
     <ion-list>
       <ion-item mode="md" color="light" *ngIf="state !== 'view'">
         <ion-label class="ion-no-margin" position="stacked">Name</ion-label>
-        <ion-input type="text" [value]="contact?.name || undefined"></ion-input>
+        <ion-input type="text" [value]="contact?.name || undefined" (ionInput)="onChangeName($event)"></ion-input>
       </ion-item>
       <ion-item mode="md" color="light" [disabled]="state === 'view'">
         <ion-label class="ion-no-margin" position="stacked">Address</ion-label>
-        <ion-input type="text" [value]="contact?.address || undefined"></ion-input>
+        <ion-input type="text" [value]="contact?.address || undefined" (ionInput)="onChangeAddress($event)"></ion-input>
       </ion-item>
       <ion-item mode="md" color="light" *ngIf="state === 'view'" [disabled]="true">
         <ion-label class="ion-no-margin" position="stacked">Transactions</ion-label>

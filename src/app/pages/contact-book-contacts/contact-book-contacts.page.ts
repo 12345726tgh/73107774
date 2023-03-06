@@ -1,27 +1,13 @@
 import { Component, OnInit } from '@angular/core'
 import { PopoverController } from '@ionic/angular'
+import { AddType, ContactInfo, ContactsService } from 'src/app/services/contacts/contacts.service'
 import { ErrorCategory, handleErrorLocal } from 'src/app/services/error-handler/error-handler.service'
 import { NavigationService } from 'src/app/services/navigation/navigation.service'
-import { VaultStorageKey, VaultStorageService } from 'src/app/services/storage/storage.service'
 import { ContactBookContactsPopoverComponent, SortType } from './contact-book-contacts-popover/contact-book-contacts-popover.component'
 
 enum SortDirection {
   ASCENDING = 'ASCENDING',
   DESCENDING = 'DESCENDING'
-}
-
-export enum AddType {
-  QR = 'QR',
-  MANUAL = 'MANUAL',
-  RECOMMENDED = 'RECOMMENDED',
-  SIGNING = 'SIGNING'
-}
-
-export interface ContactType {
-  name: string
-  address: string
-  date: string
-  addedFrom: AddType
 }
 
 @Component({
@@ -36,22 +22,21 @@ export class ContactBookContactsPage implements OnInit {
   public sortType: SortType = SortType.NAME
   public sortDirection: SortDirection = SortDirection.DESCENDING
 
-  public contacts: ContactType[] = []
+  public contacts: ContactInfo[] = []
 
   constructor(
     private readonly popoverCtrl: PopoverController,
-    private readonly storageService: VaultStorageService,
-    private readonly navigationService: NavigationService
+    private readonly navigationService: NavigationService,
+    private readonly contactsService: ContactsService
   ) {}
 
   async ngOnInit() {
-    const storedContacts: unknown = await this.storageService.get(VaultStorageKey.AIRGAP_CONTACTS_LIST)
-    this.contacts = storedContacts as ContactType[]
+    this.contacts = await this.contactsService.getContactsInfo()
   }
 
   public async onSearch(event: any) {
     const value = event.target.value.toLowerCase()
-    const storedContacts: ContactType[] = (await this.storageService.get(VaultStorageKey.AIRGAP_CONTACTS_LIST)) as ContactType[]
+    const storedContacts = await this.contactsService.getContactsInfo()
 
     const result = storedContacts.filter(
       (contact) => contact.name.toLowerCase().includes(value) || contact.address.toLowerCase().includes(value)
@@ -65,16 +50,14 @@ export class ContactBookContactsPage implements OnInit {
       .catch(handleErrorLocal(ErrorCategory.IONIC_NAVIGATION))
   }
 
-  public onClickItem(contact: ContactType) {
+  public onClickItem(contact: ContactInfo) {
     this.navigationService
       .routeWithState('/contact-book-contacts-detail', { contact: contact })
       .catch(handleErrorLocal(ErrorCategory.IONIC_NAVIGATION))
   }
 
   public async onClickSort(event: any) {
-    console.log('event', event)
-    console.log('this.sortType', this.sortType)
-
+    // TODO: error on second click
     const popover = await this.popoverCtrl.create({
       component: ContactBookContactsPopoverComponent,
       componentProps: {
@@ -82,7 +65,6 @@ export class ContactBookContactsPage implements OnInit {
         onClickSort: (sortType: SortType): void => {
           this.sortType = sortType
           popover.dismiss().catch(handleErrorLocal(ErrorCategory.IONIC_MODAL))
-          console.log('this.sortType', this.sortType)
         }
       },
       event,
@@ -102,8 +84,8 @@ export class ContactBookContactsPage implements OnInit {
     return letters
   }
 
-  public getContactsFromLetter(letter: string): ContactType[] {
-    const contacts: ContactType[] = []
+  public getContactsFromLetter(letter: string): ContactInfo[] {
+    const contacts: ContactInfo[] = []
     for (let i = 0; i < this.contacts.length; i++) {
       const name = this.contacts[i].name
       const _letter = name.charAt(0).toUpperCase()
@@ -120,8 +102,8 @@ export class ContactBookContactsPage implements OnInit {
     return addresses
   }
 
-  public getContactsFromAddress(address: string): ContactType[] {
-    const contacts: ContactType[] = []
+  public getContactsFromAddress(address: string): ContactInfo[] {
+    const contacts: ContactInfo[] = []
     for (let i = 0; i < this.contacts.length; i++) {
       if (address === this.contacts[i].address) contacts.push(this.contacts[i])
     }
@@ -136,8 +118,8 @@ export class ContactBookContactsPage implements OnInit {
     return dates
   }
 
-  public getContactsFromDate(date: string): ContactType[] {
-    const contacts: ContactType[] = []
+  public getContactsFromDate(date: string): ContactInfo[] {
+    const contacts: ContactInfo[] = []
     for (let i = 0; i < this.contacts.length; i++) {
       if (date === this.contacts[i].date) contacts.push(this.contacts[i])
     }
@@ -152,8 +134,8 @@ export class ContactBookContactsPage implements OnInit {
     return addTypes
   }
 
-  public getContactsFromAddedType(addedType: AddType): ContactType[] {
-    const contacts: ContactType[] = []
+  public getContactsFromAddedType(addedType: AddType): ContactInfo[] {
+    const contacts: ContactInfo[] = []
     for (let i = 0; i < this.contacts.length; i++) {
       if (addedType === this.contacts[i].addedFrom) contacts.push(this.contacts[i])
     }

@@ -2,7 +2,6 @@ import { BaseStorage } from '@airgap/angular-core'
 import { Injectable } from '@angular/core'
 import { Storage } from '@ionic/storage'
 import { Observable, ReplaySubject } from 'rxjs'
-import { AddType } from 'src/app/pages/contact-book-contacts/contact-book-contacts.page'
 
 export enum LanguagesType {
   EN = 'en',
@@ -74,38 +73,7 @@ const defaultValues: VaultStorageKeyReturnDefaults = {
   [VaultStorageKey.LANGUAGE_TYPE]: undefined,
   [VaultStorageKey.INSTALLATION_TYPE]: InstallationType.UNDETERMINED,
   [VaultStorageKey.AIRGAP_SECRET_LIST]: [],
-  [VaultStorageKey.AIRGAP_CONTACTS_LIST]: [
-    {
-      name: 'AA_Contact1',
-      address: 'tz3NDpRj6WBrJPikcPVHRBEjWKxFw3c6eQPS',
-      addedFrom: AddType.MANUAL,
-      date: '10. Nov'
-    },
-    {
-      name: 'A2',
-      address: 'KT1XRPEPXbZK25r3Htzp2o1x7xdMMmfocKNW',
-      addedFrom: AddType.MANUAL,
-      date: '12. Nov'
-    },
-    {
-      name: 'Alexander_',
-      address: 'tz3QSGPoRp3Kn7n3vY24eYeu3Peuqo45LQ4D',
-      addedFrom: AddType.RECOMMENDED,
-      date: '12. Nov'
-    },
-    {
-      name: 'Kol_S',
-      address: 'tz1g6cJZPL8DoDZtX8voQ11prscHC7xqbois',
-      addedFrom: AddType.QR,
-      date: '21. Jan'
-    },
-    {
-      name: 'Kool',
-      address: 'KT1XRPEPXbZK25r3Htzp2o1x7xdMMmfocKNW',
-      addedFrom: AddType.SIGNING,
-      date: '25. Jan'
-    }
-  ]
+  [VaultStorageKey.AIRGAP_CONTACTS_LIST]: []
 }
 
 @Injectable({
