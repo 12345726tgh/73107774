@@ -55,6 +55,14 @@ export class TabSettingsPage {
     this.navigationService.route('/qr-settings').catch(handleErrorLocal(ErrorCategory.IONIC_NAVIGATION))
   }
 
+  public goToAddressBook(): void {
+    this.navigationService.route('/contact-book-contacts').catch(handleErrorLocal(ErrorCategory.IONIC_NAVIGATION))
+  }
+
+  public goToAddressBookSettings(): void {
+    this.navigationService.route('/contact-book-settings').catch(handleErrorLocal(ErrorCategory.IONIC_NAVIGATION))
+  }
+
   public async goToOnboarding(): Promise<void> {
     const modal: HTMLIonModalElement = await this.modalController.create({
       component: OnboardingWelcomePage,

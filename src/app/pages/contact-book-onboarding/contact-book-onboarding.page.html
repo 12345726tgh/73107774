@@ -139,7 +139,7 @@
       <p>We'll make recommendations on who to add based on addresses you interact with frequently</p>
       <div class="suggestion-wrapper">
         <p>Suggestions</p>
-        <ion-toggle [checked]="true" (ionChange)="toggle()" slot="end"></ion-toggle>
+        <ion-toggle [checked]="suggestionsEnabled" (ionChange)="onToggleSuggestion($event)" slot="end"></ion-toggle>
       </div>
       <p class="note">Note: You can disable this option later in the settings</p>
     </div>

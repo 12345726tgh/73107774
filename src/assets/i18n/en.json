@@ -285,6 +285,12 @@
     "title": "Social Recovery",
     "text": "Tap each word to match the correct order:"
   },
+  "contact-book": {
+    "title_settings": "Address Book Settings",
+    "label_enable_suggestions": "Enable suggestions",
+    "label_enable_address_book": "Enable address book",
+    "button_delete_entries": "Reset entries"
+  },
   "tab-scan": {
     "title": "QR Code Scanner",
     "text": "Scan a QR Code from AirGap Wallet",
@@ -317,7 +323,10 @@
     "welcome-onboarding_label": "Welcome",
     "disclaimer_label": "Disclaimer",
     "installation-type_label": "Installation Type",
-    "advanced-mode-type_label": "Advanced Mode"
+    "advanced-mode-type_label": "Advanced Mode",
+    "advanced-features_label": "Advanced Features",
+    "address_book_label": "Address Book",
+    "configure_address_book_label": "Configure Address Book"
   },
   "tab-secrets": {
     "title": "Secrets",

@@ -89,4 +89,29 @@ export class ContactsService {
     storedContacts.splice(index, 1)
     await this.storageService.set(VaultStorageKey.AIRGAP_CONTACTS_LIST, storedContacts)
   }
+
+  async deleteAllContacts(): Promise<void> {
+    await this.storageService.set(VaultStorageKey.AIRGAP_CONTACTS_LIST, [])
+  }
+
+  async isBookEnabled(): Promise<boolean> {
+    console.log('isBookEnabled', !(await this.storageService.get(VaultStorageKey.ADDRESS_BOOK_DISABLED)))
+    return !(await this.storageService.get(VaultStorageKey.ADDRESS_BOOK_DISABLED))
+  }
+
+  async setBookEnable(value: boolean) {
+    console.log('setBookEnable', value)
+    await this.storageService.set(VaultStorageKey.ADDRESS_BOOK_DISABLED, !value)
+  }
+
+  async isSuggestionsEnabled(): Promise<boolean> {
+    console.log('isSuggestionsEnabled', !(await this.storageService.get(VaultStorageKey.ADDRESS_BOOK_SUGGESTIONS_DISABLED)))
+
+    return !(await this.storageService.get(VaultStorageKey.ADDRESS_BOOK_SUGGESTIONS_DISABLED))
+  }
+
+  async setSuggestionsEnable(value: boolean) {
+    console.log('setSuggestionsEnable', value)
+    await this.storageService.set(VaultStorageKey.ADDRESS_BOOK_SUGGESTIONS_DISABLED, !value)
+  }
 }
