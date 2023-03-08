@@ -103,7 +103,7 @@ export class ContactBookContactsPage implements OnInit {
       const letter = name.charAt(0).toUpperCase()
       if (!letters.includes(letter)) letters.push(letter)
     }
-    return letters
+    return letters.sort()
   }
 
   public getContactsFromLetter(letter: string): ContactInfo[] {
@@ -121,7 +121,7 @@ export class ContactBookContactsPage implements OnInit {
     for (let i = 0; i < this.contacts.length; i++) {
       if (!addresses.includes(this.contacts[i].address)) addresses.push(this.contacts[i].address)
     }
-    return addresses
+    return addresses.sort()
   }
 
   public getContactsFromAddress(address: string): ContactInfo[] {
@@ -137,7 +137,7 @@ export class ContactBookContactsPage implements OnInit {
     for (let i = 0; i < this.contacts.length; i++) {
       if (!dates.includes(this.contacts[i].date)) dates.push(this.contacts[i].date)
     }
-    return dates
+    return dates.sort()
   }
 
   public getContactsFromDate(date: string): ContactInfo[] {
@@ -153,7 +153,7 @@ export class ContactBookContactsPage implements OnInit {
     for (let i = 0; i < this.contacts.length; i++) {
       if (!addTypes.includes(this.contacts[i].addedFrom)) addTypes.push(this.contacts[i].addedFrom)
     }
-    return addTypes
+    return addTypes.sort()
   }
 
   public getContactsFromAddedType(addedType: AddType): ContactInfo[] {
