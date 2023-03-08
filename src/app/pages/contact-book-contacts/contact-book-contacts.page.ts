@@ -23,10 +23,7 @@ export class ContactBookContactsPage implements OnInit {
   public sortDirection: SortDirection = SortDirection.DESCENDING
 
   public contacts: ContactInfo[] = []
-
-  get suggestions() {
-    return this.contactsService.getSuggestions()
-  }
+  public suggestions: string[] = []
 
   constructor(
     private readonly popoverCtrl: PopoverController,
@@ -36,6 +33,8 @@ export class ContactBookContactsPage implements OnInit {
 
   async ngOnInit() {
     this.contacts = await this.contactsService.getContactsInfo()
+    const suggestionsEnabled = await this.contactsService.isSuggestionsEnabled()
+    this.suggestions = suggestionsEnabled ? await this.contactsService.getSuggestions() : []
   }
 
   public async onClickBack() {
@@ -94,6 +93,7 @@ export class ContactBookContactsPage implements OnInit {
 
   public async onClickCloseSuggestion(address: string) {
     await this.contactsService.deleteSuggestion(address)
+    this.suggestions = await this.contactsService.getSuggestions()
   }
 
   public getLettersFromNames(): string[] {

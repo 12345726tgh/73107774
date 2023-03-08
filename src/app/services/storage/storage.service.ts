@@ -44,6 +44,7 @@ export enum VaultStorageKey {
   INSTALLATION_TYPE = 'INSTALLATION_TYPE',
   AIRGAP_SECRET_LIST = 'airgap-secret-list',
   AIRGAP_CONTACTS_LIST = 'airgap-contacts-list',
+  AIRGAP_CONTACTS_RECOMMENDED_LIST = 'airgap-contacts-recommended-list',
   ADDRESS_BOOK_DISABLED = 'ADDRESS_BOOK_DISABLED',
   ADDRESS_BOOK_SUGGESTIONS_DISABLED = 'ADDRESS_BOOK_SUGGESTIONS_DISABLED',
   ADDRESS_BOOK_ONBOARDING_DISABLED = 'ADDRESS_BOOK_ONBOARDING_DISABLED'
@@ -61,6 +62,7 @@ interface VaultStorageKeyReturnType {
   [VaultStorageKey.INSTALLATION_TYPE]: InstallationType
   [VaultStorageKey.AIRGAP_SECRET_LIST]: unknown
   [VaultStorageKey.AIRGAP_CONTACTS_LIST]: unknown
+  [VaultStorageKey.AIRGAP_CONTACTS_RECOMMENDED_LIST]: string[]
   [VaultStorageKey.ADDRESS_BOOK_DISABLED]: boolean
   [VaultStorageKey.ADDRESS_BOOK_SUGGESTIONS_DISABLED]: boolean
   [VaultStorageKey.ADDRESS_BOOK_ONBOARDING_DISABLED]: boolean
@@ -80,6 +82,7 @@ const defaultValues: VaultStorageKeyReturnDefaults = {
   [VaultStorageKey.INSTALLATION_TYPE]: InstallationType.UNDETERMINED,
   [VaultStorageKey.AIRGAP_SECRET_LIST]: [],
   [VaultStorageKey.AIRGAP_CONTACTS_LIST]: [],
+  [VaultStorageKey.AIRGAP_CONTACTS_RECOMMENDED_LIST]: [],
   [VaultStorageKey.ADDRESS_BOOK_DISABLED]: false,
   [VaultStorageKey.ADDRESS_BOOK_SUGGESTIONS_DISABLED]: false,
   [VaultStorageKey.ADDRESS_BOOK_ONBOARDING_DISABLED]: false

@@ -29,18 +29,29 @@ export interface ContactType {
   providedIn: 'root'
 })
 export class ContactsService {
-  private suggestions: string[] = []
-
   constructor(private readonly storageService: VaultStorageService) {}
 
-  getSuggestions(): string[] {
-    return this.suggestions
+  async getSuggestions(): Promise<string[]> {
+    return (await this.storageService.get(VaultStorageKey.AIRGAP_CONTACTS_RECOMMENDED_LIST)) as string[]
+  }
+
+  async addSuggestion(address: string): Promise<void> {
+    const storedRecommendations: string[] = (await this.storageService.get(VaultStorageKey.AIRGAP_CONTACTS_RECOMMENDED_LIST)) as string[]
+
+    const index = storedRecommendations.findIndex((suggestion) => suggestion === address)
+    if (index < 0) {
+      storedRecommendations.push(address)
+      await this.storageService.set(VaultStorageKey.AIRGAP_CONTACTS_RECOMMENDED_LIST, storedRecommendations)
+    } else console.error('Suggestion already stored')
   }
 
   async deleteSuggestion(address: string): Promise<void> {
-    const index = this.suggestions.findIndex((suggestion) => suggestion === address)
+    const storedRecommendations: string[] = (await this.storageService.get(VaultStorageKey.AIRGAP_CONTACTS_RECOMMENDED_LIST)) as string[]
+
+    const index = storedRecommendations.findIndex((suggestion) => suggestion === address)
     if (index >= 0) {
-      this.suggestions.splice(index, 1)
+      storedRecommendations.splice(index, 1)
+      await this.storageService.set(VaultStorageKey.AIRGAP_CONTACTS_RECOMMENDED_LIST, storedRecommendations)
     } else console.error('Invalid suggestion')
   }
 
@@ -51,6 +62,7 @@ export class ContactsService {
 
   async createContact(name: string, address: string, addedFrom: AddType): Promise<void> {
     const storedContacts: ContactType[] = (await this.storageService.get(VaultStorageKey.AIRGAP_CONTACTS_LIST)) as ContactType[]
+    const storedRecommendations: string[] = (await this.storageService.get(VaultStorageKey.AIRGAP_CONTACTS_RECOMMENDED_LIST)) as string[]
 
     storedContacts.push({
       id: `contact${storedContacts.length + 1}`,
@@ -60,6 +72,12 @@ export class ContactsService {
       addedFrom,
       transactions: []
     })
+
+    const index = storedRecommendations.findIndex((recommendation) => recommendation === address)
+    if (index >= 0) {
+      storedRecommendations.splice(index, 1)
+      await this.storageService.set(VaultStorageKey.AIRGAP_CONTACTS_RECOMMENDED_LIST, storedRecommendations)
+    }
     await this.storageService.set(VaultStorageKey.AIRGAP_CONTACTS_LIST, storedContacts)
   }
 
@@ -116,5 +134,15 @@ export class ContactsService {
 
   async setOnboardingEnable(value: boolean) {
     await this.storageService.set(VaultStorageKey.ADDRESS_BOOK_ONBOARDING_DISABLED, !value)
+  }
+
+  async isAddressInContacts(address: string): Promise<boolean> {
+    const storedContacts: ContactType[] = (await this.storageService.get(VaultStorageKey.AIRGAP_CONTACTS_LIST)) as ContactType[]
+    const storedRecommendations: string[] = (await this.storageService.get(VaultStorageKey.AIRGAP_CONTACTS_RECOMMENDED_LIST)) as string[]
+
+    const contactFound = storedContacts.find((contact) => contact.address === address)
+    const recommendationFound = storedRecommendations.find((recommendation) => recommendation === address)
+
+    return !!contactFound && !recommendationFound
   }
 }

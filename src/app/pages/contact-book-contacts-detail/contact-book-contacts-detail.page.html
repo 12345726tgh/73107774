@@ -117,10 +117,6 @@
         ></ion-input>
       </ion-item>
       <ion-item mode="md" color="light" *ngIf="state === 'view'" [disabled]="true">
-        <ion-label class="ion-no-margin" position="stacked">{{ 'contact-book.label_transactions' | translate }}</ion-label>
-        <ion-input class="input_disabled" type="text" [value]="contact?.address || undefined"></ion-input>
-      </ion-item>
-      <ion-item mode="md" color="light" *ngIf="state === 'view'" [disabled]="true">
         <ion-label class="ion-no-margin" position="stacked">{{ 'contact-book.label_creation_date' | translate }}</ion-label>
         <ion-input class="input_disabled" type="text" [value]="contact?.date || undefined"></ion-input>
       </ion-item>

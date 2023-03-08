@@ -7,11 +7,10 @@
   padding: 4px 8px;
 
   .suggestion-image-wrapper {
-    height: 35px;
-    width: 35px;
+    height: 40px;
+    width: 40px;
 
     .suggestion-image {
-      background-color: purple;
       width: 100%;
       height: 100%;
       border-radius: 100%;
@@ -22,12 +21,9 @@
     flex: 1;
 
     .suggestion-address {
+      line-break: anywhere;
       margin: 0px;
-      max-width: 60vw;
-      text-overflow: ellipsis;
-      overflow: hidden;
-      white-space: nowrap;
-      font-weight: 400;
+      font-weight: 500;
       color: grey;
     }
   }
@@ -39,6 +35,20 @@
 
     .suggestion-date {
       margin: 0px;
+    }
+  }
+
+  .suggestion-actions {
+    display: flex;
+    .suggestion-button {
+      font-size: 12px;
+    }
+
+    ion-icon {
+      font-size: 26px;
+      margin-top: auto;
+      margin-bottom: auto;
+      margin-left: 8px;
     }
   }
 }
