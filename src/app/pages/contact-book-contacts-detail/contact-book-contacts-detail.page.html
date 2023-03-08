@@ -29,7 +29,7 @@
 <ion-content class="ion-padding">
   <div class="main-wrapper">
     <div class="image-wrapper">
-      <div class="image"></div>
+      <airgap-identicon class="image" [address]="contact?.address || ''"></airgap-identicon>
     </div>
     <ng-container *ngIf="state === 'view'">
       <h1 class="name">{{contact?.name || ""}}</h1>

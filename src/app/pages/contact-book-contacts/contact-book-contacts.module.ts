@@ -1,3 +1,4 @@
+import { ComponentsModule } from '@airgap/angular-core'
 import { CommonModule } from '@angular/common'
 import { NgModule } from '@angular/core'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
@@ -19,7 +20,7 @@ const routes: Routes = [
 
 @NgModule({
   entryComponents: [ContactBookContactsPopoverComponent, ContactBookContactsItemComponent, ContactBookContactsSuggestionComponent],
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, IonicModule, RouterModule.forChild(routes), TranslateModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, IonicModule, RouterModule.forChild(routes), TranslateModule, ComponentsModule],
   declarations: [
     ContactBookContactsPage,
     ContactBookContactsPopoverComponent,

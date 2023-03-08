@@ -1,5 +1,7 @@
 <div class="contact-wrapper">
-  <div class="contact-image-wrapper"><div class="contact-image"></div></div>
+  <div class="contact-image-wrapper">
+    <airgap-identicon class="contact-image" [address]="address || ''"></airgap-identicon>
+  </div>
   <div class="contact-name-wrapper">
     <p class="contact-name">{{ name }}</p>
     <p class="contact-address">{{ address }}</p>
