@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core'
 import { ContactsService } from 'src/app/services/contacts/contacts.service'
+import { ErrorCategory, handleErrorLocal } from 'src/app/services/error-handler/error-handler.service'
+import { NavigationService } from 'src/app/services/navigation/navigation.service'
 
 @Component({
   selector: 'airgap-contact-book-onboarding',
@@ -10,7 +12,7 @@ export class ContactBookOnboardingPage implements OnInit {
   public suggestionsEnabled: boolean
   public state: 0 | 1 | 2
 
-  constructor(private readonly contactsService: ContactsService) {
+  constructor(private readonly contactsService: ContactsService, private readonly navigationService: NavigationService) {
     this.state = 0
   }
 
@@ -22,14 +24,16 @@ export class ContactBookOnboardingPage implements OnInit {
     this.state = state
   }
 
-  next() {
+  async next() {
     if (this.state < 2) this.state++
-    else console.log('next route')
+    else {
+      await this.contactsService.setOnboardingEnable(false)
+      this.navigationService.route('/contact-book-contacts').catch(handleErrorLocal(ErrorCategory.IONIC_NAVIGATION))
+    }
   }
 
   prev() {
     if (this.state > 0) this.state--
-    else console.log('prev route')
   }
 
   async onToggleSuggestion(event: any) {

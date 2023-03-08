@@ -4,24 +4,24 @@
       <ion-back-button defaultHref=""></ion-back-button>
     </ion-buttons>
     <ion-buttons slot="end" (click)="onClickEdit()">
-      <p class="top-button">Edit</p>
+      <p class="top-button">{{ 'contact-book.label_edit' | translate }}</p>
     </ion-buttons>
   </ion-toolbar>
   <ion-toolbar *ngIf="state === 'new'">
     <ion-buttons slot="start" (click)="onClickCancel()">
-      <p class="top-button">Cancel</p>
+      <p class="top-button">{{ 'contact-book.label_cancel' | translate }}</p>
     </ion-buttons>
     <ion-title>{{ "New Address Entry" }}</ion-title>
     <ion-buttons slot="end" (click)="onClickFinish()">
-      <p class="top-button">Finish</p>
+      <p class="top-button">{{ 'contact-book.label_finish' | translate }}</p>
     </ion-buttons>
   </ion-toolbar>
   <ion-toolbar *ngIf="state === 'edit'">
     <ion-buttons slot="start" (click)="onClickCancel()">
-      <p class="top-button">Cancel</p>
+      <p class="top-button">{{ 'contact-book.label_cancel' | translate }}</p>
     </ion-buttons>
     <ion-buttons slot="end" (click)="onClickFinish()">
-      <p class="top-button">Finish</p>
+      <p class="top-button">{{ 'contact-book.label_finish' | translate }}</p>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
@@ -34,7 +34,7 @@
     <ng-container *ngIf="state === 'view'">
       <h1 class="name">{{contact?.name || ""}}</h1>
       <div class="added-wrapper" *ngIf="contact && contact.addedFrom">
-        added by
+        {{ 'contact-book.label_added_by' | translate }}
         <ng-container *ngIf="contact && contact.addedFrom === addEnum.QR">
           <svg
             fill="currentColor"
@@ -103,11 +103,11 @@
 
     <ion-list>
       <ion-item mode="md" color="light" *ngIf="state !== 'view'">
-        <ion-label class="ion-no-margin" position="stacked">Name</ion-label>
+        <ion-label class="ion-no-margin" position="stacked">{{ 'contact-book.label_name' | translate }}</ion-label>
         <ion-input class="input_enabled" type="text" [value]="contact?.name || undefined" (ionInput)="onChangeName($event)"></ion-input>
       </ion-item>
       <ion-item mode="md" color="light" [disabled]="state === 'view'">
-        <ion-label class="ion-no-margin" position="stacked">Address</ion-label>
+        <ion-label class="ion-no-margin" position="stacked">{{ 'contact-book.label_address' | translate }}</ion-label>
         <ion-input
           [class.input_disabled]="state === 'view'"
           [class.input_enabled]="state !== 'view'"
@@ -117,15 +117,17 @@
         ></ion-input>
       </ion-item>
       <ion-item mode="md" color="light" *ngIf="state === 'view'" [disabled]="true">
-        <ion-label class="ion-no-margin" position="stacked">Transactions</ion-label>
+        <ion-label class="ion-no-margin" position="stacked">{{ 'contact-book.label_transactions' | translate }}</ion-label>
         <ion-input class="input_disabled" type="text" [value]="contact?.address || undefined"></ion-input>
       </ion-item>
       <ion-item mode="md" color="light" *ngIf="state === 'view'" [disabled]="true">
-        <ion-label class="ion-no-margin" position="stacked">Creation date</ion-label>
+        <ion-label class="ion-no-margin" position="stacked">{{ 'contact-book.label_creation_date' | translate }}</ion-label>
         <ion-input class="input_disabled" type="text" [value]="contact?.date || undefined"></ion-input>
       </ion-item>
     </ion-list>
 
-    <button class="delete-button" expand="block" *ngIf="state === 'edit'" (click)="onClickDelete()">Delete address entry</button>
+    <button class="delete-button" expand="block" *ngIf="state === 'edit'" (click)="onClickDelete()">
+      {{ 'contact-book.label_delete_entry' | translate }}
+    </button>
   </div>
 </ion-content>

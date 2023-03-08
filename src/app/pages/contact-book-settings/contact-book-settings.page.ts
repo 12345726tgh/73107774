@@ -31,6 +31,7 @@ export class ContactBookSettingsPage implements OnInit {
 
   public async onClickDelete() {
     await this.contactsService.deleteAllContacts()
-    this.navigationService.route('/contact-book-contacts').catch(handleErrorLocal(ErrorCategory.IONIC_NAVIGATION))
+    await this.contactsService.setOnboardingEnable(true)
+    this.navigationService.route('/tabs/tab-settings').catch(handleErrorLocal(ErrorCategory.IONIC_NAVIGATION))
   }
 }

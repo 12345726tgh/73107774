@@ -1,9 +1,9 @@
 <ion-header class="ion-no-border">
   <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/secret-setup"></ion-back-button>
+    <ion-buttons slot="start" (click)="onClickBack()">
+      <ion-back-button defaultHref="/tabs/tab-settings"></ion-back-button>
     </ion-buttons>
-    <ion-title>{{ "Address Book" }}</ion-title>
+    <ion-title>{{ 'contact-book.title_address_book' | translate }}</ion-title>
     <ion-buttons slot="primary" (click)="onClickNew($event)">
       <ion-button>
         <ion-icon slot="icon-only" name="add-outline"></ion-icon>
@@ -12,7 +12,7 @@
   </ion-toolbar>
 
   <ion-toolbar color="secondary">
-    <ion-searchbar placeholder="Search contacts" (ionInput)="onSearch($event)"></ion-searchbar>
+    <ion-searchbar placeholder="{{'contact-book.label_search_contacts' | translate}}" (ionInput)="onSearch($event)"></ion-searchbar>
     <ion-buttons slot="primary" (click)="onClickSort($event)">
       <ion-button>
         <ion-icon slot="icon-only" name="funnel"></ion-icon>
@@ -85,7 +85,7 @@
 
     <ng-container *ngIf="suggestions.length > 0">
       <div class="suggestions-wrapper">
-        <h3 class="suggestions-header">Suggestions</h3>
+        <h3 class="suggestions-header">{{ 'contact-book.label_suggestions' | translate }}</h3>
         <div *ngFor="let suggestion of suggestions">
           <airgap-contact-book-contacts-suggestion
             [address]="suggestion"

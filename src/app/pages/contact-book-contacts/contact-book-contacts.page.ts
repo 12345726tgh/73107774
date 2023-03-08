@@ -38,6 +38,10 @@ export class ContactBookContactsPage implements OnInit {
     this.contacts = await this.contactsService.getContactsInfo()
   }
 
+  public async onClickBack() {
+    this.navigationService.route('/tabs/tab-settings').catch(handleErrorLocal(ErrorCategory.IONIC_NAVIGATION))
+  }
+
   public async onSearch(event: any) {
     const value = event.target.value.toLowerCase()
     const storedContacts = await this.contactsService.getContactsInfo()

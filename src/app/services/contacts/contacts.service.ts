@@ -95,23 +95,26 @@ export class ContactsService {
   }
 
   async isBookEnabled(): Promise<boolean> {
-    console.log('isBookEnabled', !(await this.storageService.get(VaultStorageKey.ADDRESS_BOOK_DISABLED)))
     return !(await this.storageService.get(VaultStorageKey.ADDRESS_BOOK_DISABLED))
   }
 
   async setBookEnable(value: boolean) {
-    console.log('setBookEnable', value)
     await this.storageService.set(VaultStorageKey.ADDRESS_BOOK_DISABLED, !value)
   }
 
   async isSuggestionsEnabled(): Promise<boolean> {
-    console.log('isSuggestionsEnabled', !(await this.storageService.get(VaultStorageKey.ADDRESS_BOOK_SUGGESTIONS_DISABLED)))
-
     return !(await this.storageService.get(VaultStorageKey.ADDRESS_BOOK_SUGGESTIONS_DISABLED))
   }
 
   async setSuggestionsEnable(value: boolean) {
-    console.log('setSuggestionsEnable', value)
     await this.storageService.set(VaultStorageKey.ADDRESS_BOOK_SUGGESTIONS_DISABLED, !value)
+  }
+
+  async isOnboardingEnabled(): Promise<boolean> {
+    return !(await this.storageService.get(VaultStorageKey.ADDRESS_BOOK_ONBOARDING_DISABLED))
+  }
+
+  async setOnboardingEnable(value: boolean) {
+    await this.storageService.set(VaultStorageKey.ADDRESS_BOOK_ONBOARDING_DISABLED, !value)
   }
 }
