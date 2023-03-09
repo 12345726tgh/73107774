@@ -28,6 +28,7 @@ export class ContactBookOnboardingPage implements OnInit {
     if (this.state < 2) this.state++
     else {
       await this.contactsService.setOnboardingEnable(false)
+      await this.contactsService.setBookEnable(true)
       this.navigationService.route('/contact-book-contacts').catch(handleErrorLocal(ErrorCategory.IONIC_NAVIGATION))
     }
   }

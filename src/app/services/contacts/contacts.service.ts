@@ -145,4 +145,11 @@ export class ContactsService {
 
     return !!contactFound && !recommendationFound
   }
+
+  async getContactName(address: string): Promise<string | undefined> {
+    const storedContacts: ContactType[] = (await this.storageService.get(VaultStorageKey.AIRGAP_CONTACTS_LIST)) as ContactType[]
+    const contact = storedContacts.find((contact) => contact.address == address)
+    if (contact) return contact.name
+    else return undefined
+  }
 }

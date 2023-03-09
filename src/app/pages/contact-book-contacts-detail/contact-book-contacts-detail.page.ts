@@ -17,13 +17,13 @@ export class ContactBookContactsDetailPage {
   constructor(private readonly navigationService: NavigationService, private readonly contactsService: ContactsService) {}
 
   ionViewWillEnter() {
+    console.log('ionViewWillEnter detail page')
+
     const state = this.navigationService?.getState()
-    console.log('state', state)
     if (state.isNew) {
       this.state = 'new'
       this.contact = {} as ContactType
       if (state.addType && state.addType === AddType.RECOMMENDED && state.address && state.address.length > 0) {
-        console.log('enter here')
         this.contact.address = state.address
         this.contact.addedFrom = AddType.RECOMMENDED
       } else if (state.addType && state.addType === AddType.SIGNING && state.address && state.address.length > 0) {
@@ -37,7 +37,6 @@ export class ContactBookContactsDetailPage {
       this.state = 'view'
       this.contact = state.contact
     }
-    console.log('contact', this.contact)
   }
 
   onClickBack() {
@@ -66,12 +65,11 @@ export class ContactBookContactsDetailPage {
     }
 
     if (this.state === 'new') {
-      console.log('contact', this.contact)
       await this.contactsService.createContact(this.contact.name, this.contact.address, this.contact.addedFrom)
       if (this.contact.addedFrom === AddType.RECOMMENDED) this.contactsService.deleteSuggestion(this.contact.address)
       if (this.contact.addedFrom === AddType.SIGNING)
         this.navigationService
-          .routeWithState('/transaction-signed', { entao: true }, { replaceUrl: true })
+          .routeWithState('/transaction-signed', { entao: true })
           .catch(handleErrorLocal(ErrorCategory.IONIC_NAVIGATION))
       else this.navigationService.route('/contact-book-contacts').catch(handleErrorLocal(ErrorCategory.IONIC_NAVIGATION))
     } else if (this.state === 'edit') {

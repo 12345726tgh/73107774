@@ -4,7 +4,6 @@ import { NavigationService } from 'src/app/services/navigation/navigation.servic
 export enum SortType {
   NAME = 'NAME',
   ADDRESS = 'ADDRESS',
-  DATE_INTERACTION = 'DATE_INTERACTION',
   DATE_CREATION = 'DATE_CREATION',
   ADDED_BY = 'ADDED_BY'
 }
@@ -21,7 +20,6 @@ export class ContactBookContactsPopoverComponent implements OnInit {
   public sortTypes: { id: string; label: string }[] = [
     { id: SortType.NAME, label: 'Standard (Name)' },
     { id: SortType.ADDRESS, label: 'Address' },
-    { id: SortType.DATE_INTERACTION, label: 'Date of Last Interaction' },
     { id: SortType.DATE_CREATION, label: 'Creation Date' },
     { id: SortType.ADDED_BY, label: 'Added by' }
   ]
@@ -33,9 +31,6 @@ export class ContactBookContactsPopoverComponent implements OnInit {
   }
 
   public async changeSort(sortType: SortType): Promise<void> {
-    console.log('sortType', sortType)
-    console.log('this.defaultSortType', this.defaultSortType)
-
     if (this.onClickSort) {
       this.onClickSort(sortType)
     }
